@@ -1,4 +1,5 @@
 from torch import nn
+import torch
 import math
 
 class TokenEmbeding(nn.Embedding):
@@ -13,9 +14,9 @@ class TokenEmbeding(nn.Embedding):
     torch.Tensor, the token embeding shape of (b, seq_len, d_model).
     """
     
-    def __init__(self, vocab_size, d_model):
+    def __init__(self, vocab_size : int, d_model : int) -> None:
         super(TokenEmbeding, self).__init__(vocab_size, d_model)
         self.d_model = d_model
         
-    def forward(self, x):
+    def forward(self, x : torch.Tensor) -> torch.Tensor:
         return super().forward(x) * math.sqrt(self.d_model)

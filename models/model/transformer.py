@@ -13,8 +13,16 @@ class Transformer(nn.Module):
         self.encoder = Encoder(d_model, num_heads, num_layers, d_ff, dropout_prob)
         self.decoder = Decoder(d_model, num_heads, num_layers, d_ff, dropout_prob)
         
-        self.linear = nn.Linear(d_model, d_model)
+        
+        self.linear = nn.Linear(d_model, dec_vob_size, bias=False)
         self.softmax = nn.Softmax(dim=-1)
+        
+        # shared weight between decoder embeding and linear
+        self.shared_weight = nn.Parameter(torch.randn(d_model, dec_vob_size))
+        nn.init.normal_(self.shared_weight, mean=0.0, std=0.02)
+        self.dec_embed.token_embeding.weight = self.shared_weight
+        self.linear.weight = self.shared_weight
+        
     def forward(self, src, tgt, src_mask, tgt_mask):
         # embeding
         src = self.enc_embed(src)

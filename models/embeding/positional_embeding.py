@@ -12,13 +12,14 @@ class PositionalEmbeding(nn.Module):
     Returns:
     torch.Tensor, the positional embeding shape of (b, seq_len, d_model).
     """
-    def __init__(self, max_len : int, d_model : int) -> None:
+    def __init__(self, max_len : int, d_model : int, device):
         super(PositionalEmbeding, self).__init__()
         self.d_model = d_model
-        self.pe = torch.zeros(max_len, d_model)
+        self.pe = torch.zeros(max_len, d_model, device=device).float()
+        self.pe.requires_grad = False
         
-        pos = torch.arange(0, max_len).unsqueeze(1).float()
-        _2i = torch.arange(0, d_model, step=2).float()
+        pos = torch.arange(0, max_len, device=device).unsqueeze(1).float().to(device)
+        _2i = torch.arange(0, d_model, step=2, device=device).float().to(device)
         div_term = torch.exp(10000, _2i / d_model)
         
         self.pe[:, 0::2] = torch.sin(pos / div_term)

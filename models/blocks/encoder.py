@@ -5,17 +5,17 @@ from layers.layer_norm import LayerNorm
 from layers.ffn import FFN
 
 class Encoder(nn.Module):
-    def __init__(self, d_model=512, num_heads=8) -> None:
+    def __init__(self, d_model=512, num_heads=8, dropout_probs=0.1):
         super(Encoder, self).__init__()
         self.MHA = MultiHeadAttention(d_model=d_model, num_heads=num_heads)
         self.norm1 = LayerNorm(d_model)
         self.norm2 = LayerNorm(d_model)
         self.FFN = FFN(d_model=d_model, d_ff=d_model*4)
-        self.dropout1 = nn.Dropout(0.1)
-        self.dropout2 = nn.Dropout(0.1)
+        self.dropout1 = nn.Dropout(dropout_probs)
+        self.dropout2 = nn.Dropout(dropout_probs)
         
-    def forward(self, x : torch.Tensor) -> torch.Tensor:
-        z = self.MHA(x, x, x)
+    def forward(self, x, padding_mask):
+        z = self.MHA(x, x, x, mask=padding_mask)
         z = self.dropout1(z)
         z = self.norm1(z + x)
         

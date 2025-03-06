@@ -29,5 +29,25 @@ class Transformer(nn.Module):
         output = self.softmax(output)
         return output
     
+    def make_causual_mask(self, x, num_heads):
+        b, l = x.size()
+        mask = torch.triu(torch.ones((l, l), device=x.device), diagonal=1)
+        mask = mask.masked_fill(mask==1, float('-inf')).unsqueeze(0).unsqueeze(0).expand(b, num_heads, l, l)
+        return mask
+    
+    def make_padding_mask(x, num_heads):
+
+        batch_size, seq_len = x.shape
+
+        # Create a mask for <PAD> tokens
+        mask = (x != 0).unsqueeze(1).unsqueeze(1)  # (batch_size, 1, 1, seq_len)
+        mask = mask.masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, 0)
+
+        # Expand the mask to all heads
+        mask = mask.expand(batch_size, num_heads, seq_len, seq_len)
+
+        return mask
+
+    
     
         

@@ -16,10 +16,10 @@ class TransformerEmbeding(nn.Module):
     torch.Tensor, the transformer embeding shape of (b, seq_len, d_model).
     """
     
-    def __init__(self, vocab_size : int, d_model : int, max_len : int) -> None:
+    def __init__(self, vocab_size : int, d_model : int, max_len : int, device) -> None:
         super(TransformerEmbeding, self).__init__()
-        self.token_embeding = nn.Embedding(vocab_size, d_model)
-        self.positional_embeding = PositionalEmbeding(max_len, d_model)
+        self.token_embeding = TokenEmbeding(vocab_size, d_model)
+        self.positional_embeding = PositionalEmbeding(max_len, d_model, device=device)
         
         
     def forward(self, x : torch.Tensor) -> torch.Tensor:

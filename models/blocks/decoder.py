@@ -5,14 +5,14 @@ from layers.layer_norm import LayerNorm
 from layers.ffn import FFN
 
 class Decoder(nn.Module):
-    def __init__(self, d_model=512, num_heads=8, dropout_prob=0.1):
+    def __init__(self, d_model=512, num_heads=8, d_ff=2048, dropout_prob=0.1):
         super(Decoder, self).__init__()
         self.MHA1 = MultiHeadAttention(d_model=d_model, num_heads=num_heads)
         self.MHA2 = MultiHeadAttention(d_model=d_model, num_heads=num_heads)
         self.norm1 = LayerNorm(d_model)
         self.norm2 = LayerNorm(d_model)
         self.norm3 = LayerNorm(d_model)
-        self.FFN = FFN(d_model=d_model, d_ff=d_model*4)
+        self.FFN = FFN(d_model=d_model, d_ff=d_ff)
         self.dropout1 = nn.Dropout(dropout_prob)
         self.dropout2 = nn.Dropout(dropout_prob)
         self.dropout3 = nn.Dropout(dropout_prob)

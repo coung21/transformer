@@ -48,8 +48,8 @@ class Transformer(nn.Module):
         batch_size, seq_len = x.shape
 
         # Create a mask for <PAD> tokens
-        mask = (x != 0).unsqueeze(1).unsqueeze(1)  # (batch_size, 1, 1, seq_len)
-        mask = mask.masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, 0)
+        mask = (x == 1).unsqueeze(1).unsqueeze(1)  # (batch_size, 1, 1, seq_len)
+        mask = mask.masked_fill(mask == 1, float('-inf'))   
 
         # Expand the mask to all heads
         mask = mask.expand(batch_size, num_heads, seq_len, seq_len)

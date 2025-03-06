@@ -15,7 +15,7 @@ class TokenEmbeding(nn.Embedding):
     """
     
     def __init__(self, vocab_size : int, d_model : int) -> None:
-        super(TokenEmbeding, self).__init__(vocab_size, d_model)
+        super(TokenEmbeding, self).__init__(vocab_size, d_model, padding_idx=0)
         self.d_model = d_model
         
     def forward(self, x : torch.Tensor) -> torch.Tensor:

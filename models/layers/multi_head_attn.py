@@ -33,6 +33,7 @@ class MultiHeadAttention(nn.Module):
         # step 5: final linear projection
         output = self.w_concat(output)
         
+        return output
     
     def split_heads(self, x):
         batch_size, seq_len, d_model = x.size()

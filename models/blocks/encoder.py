@@ -1,26 +1,26 @@
 import torch
 from torch import nn
+from layers.multi_head_attn import MultiHeadAttention
+from layers.layer_norm import LayerNorm
+from layers.ffn import FFN
 
 class Encoder(nn.Module):
     def __init__(self, d_model=512, num_heads=8) -> None:
         super(Encoder, self).__init__()
-        self.MHA = nn.MultiheadAttention(embed_dim=d_model, num_heads=num_heads)
-        self.layer_norm = nn.LayerNorm(d_model)
-        self.FFN = nn.Sequential(
-            nn.Linear(d_model, d_model*4),
-            nn.ReLU(),
-            nn.Linear(d_model*4, d_model)
-        )
+        self.MHA = MultiHeadAttention(d_model=d_model, num_heads=num_heads)
+        self.layer_norm = LayerNorm(d_model)
+        self.FFN = FFN(d_model=d_model, d_ff=d_model*4)
+        self.dropout = nn.Dropout(0.1)
         
     def forward(self, x : torch.Tensor) -> torch.Tensor:
-        z = self.MHA(x, x, x)[0]
-        z = nn.Dropout(p=0.1)(z)
-        x = self.layer_norm(x + z)
+        z = self.MHA(x, x, x)
+        z = self.dropout(z)
+        z = self.layer_norm(z + x)
         
-        z = self.FFN(x)
-        z = nn.Dropout(p=0.1)(z)
-        x = self.layer_norm(x + z)
+        out = self.FFN(z)
+        out = self.dropout(out)
+        out = self.layer_norm(out + z)
         
-        return x
-            
+        return out
+        
     

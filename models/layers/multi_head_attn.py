@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from scale_dot_product_attn import ScaleDotProductAttention
+from models.layers.scale_dot_product_attn import ScaleDotProductAttention
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model=512, num_heads=8):
@@ -14,6 +14,7 @@ class MultiHeadAttention(nn.Module):
         self.w_concat = nn.Linear(d_model, d_model)
         
     def forward(self, q, k, v, mask=None):
+  
          # step 1: linear projection
         q = self.w_q(q)
         k = self.w_k(k)

@@ -1,24 +1,24 @@
 import torch
 import torch.nn as nn
-from encoder import Encoder
-from decoder import Decoder
-from embeding.transformer_embeding import TransformerEmbeding
+from models.model.encoder import Encoder
+from models.model.decoder import Decoder
+from models.embeding.transformer_embeding import TransformerEmbeding
 
 class Transformer(nn.Module):
     def __init__(self, d_model=512, num_heads=8, num_layers=6, d_ff=2048, enc_vob_size=10000, dec_vob_size=10000, dropout_prob=0.1, device=None):
         super(Transformer, self).__init__()
-        self.enc_embed = TransformerEmbeding(d_model, enc_vob_size, max_len=512, device=device)
-        self.dec_embed = TransformerEmbeding(d_model, dec_vob_size, max_len=512, device=device)
+        self.enc_embed = TransformerEmbeding(d_model=d_model, vocab_size=enc_vob_size, max_len=512, device=device)
+        self.dec_embed = TransformerEmbeding(d_model=d_model, vocab_size=dec_vob_size, max_len=512, device=device)
         
         self.encoder = Encoder(d_model, num_heads, num_layers, d_ff, dropout_prob)
         self.decoder = Decoder(d_model, num_heads, num_layers, d_ff, dropout_prob)
         
         
-        self.linear = nn.Linear(d_model, dec_vob_size, bias=False)
+        self.linear = nn.Linear(d_model, dec_vob_size)
         self.softmax = nn.Softmax(dim=-1)
         
         # shared weight between decoder embeding and linear
-        self.shared_weight = nn.Parameter(torch.randn(d_model, dec_vob_size))
+        self.shared_weight = nn.Parameter(torch.randn(dec_vob_size, d_model))
         nn.init.normal_(self.shared_weight, mean=0.0, std=0.02)
         self.dec_embed.token_embeding.weight = self.shared_weight
         self.linear.weight = self.shared_weight
@@ -43,7 +43,7 @@ class Transformer(nn.Module):
         mask = mask.masked_fill(mask==1, float('-inf')).unsqueeze(0).unsqueeze(0).expand(b, num_heads, l, l)
         return mask
     
-    def make_padding_mask(x, num_heads):
+    def make_padding_mask(self, x, num_heads):
 
         batch_size, seq_len = x.shape
 

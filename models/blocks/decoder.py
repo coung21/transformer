@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from layers.multi_head_attn import MultiHeadAttention
-from layers.layer_norm import LayerNorm
-from layers.ffn import FFN
+from models.layers.multi_head_attn import MultiHeadAttention
+from models.layers.layer_norm import LayerNorm
+from models.layers.ffn import FFN
 
 class Decoder(nn.Module):
     def __init__(self, d_model=512, num_heads=8, d_ff=2048, dropout_prob=0.1):

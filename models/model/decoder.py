@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from blocks.decoder import Decoder as DecoderLayer
+from models.blocks.decoder import Decoder as DecoderLayer
 
 class Decoder(nn.Module):
     def __init__(self, d_model=512, num_heads=8, num_layers=6, d_ff=2048, dropout_prob=0.1):

@@ -20,7 +20,7 @@ class PositionalEmbeding(nn.Module):
         
         pos = torch.arange(0, max_len, device=device).unsqueeze(1).float()
         _2i = torch.arange(0, d_model, step=2, device=device).float()
-        div_term = torch.exp(10000, _2i / d_model)
+        div_term = torch.pow(10000, _2i / d_model)
         
         self.pe[:, 0::2] = torch.sin(pos / div_term)
         self.pe[:, 1::2] = torch.cos(pos / div_term)

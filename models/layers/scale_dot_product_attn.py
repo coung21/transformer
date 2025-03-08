@@ -10,7 +10,7 @@ class ScaleDotProductAttention(nn.Module):
         bacth_size, n_head, seq_len, d_k = k.size()
         
         # step 1: dot product
-        attn = torch.matmul(q, k.T)
+        attn = torch.matmul(q,  k.transpose(-2, -1))
         
         # step 2: scale
         attn = attn / (d_k ** 0.5)
